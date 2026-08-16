@@ -83,13 +83,5 @@ func (svc *Service) SubmissionBatches() [][]*model.Submission {
 		}
 	}
 	model.SortSubmissions(pending)
-	out := make([][]*model.Submission, 0)
-	for i := 0; i < len(pending); i += svc.batchSize {
-		end := i + svc.batchSize
-		if end > len(pending) {
-			end = len(pending)
-		}
-		out = append(out, pending[i:end])
-	}
-	return out
+	return model.BuildSubmissionBatches(pending, svc.batchSize)
 }

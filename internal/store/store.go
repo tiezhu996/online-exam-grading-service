@@ -60,7 +60,9 @@ func (s *Store) GetExam(id string) (*model.Exam, error) {
 func (s *Store) ExamIDs() []string {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	return s.examOrder
+	out := make([]string, len(s.examOrder))
+	copy(out, s.examOrder)
+	return out
 }
 
 func (s *Store) AddQuestion(q *model.Question) error {
