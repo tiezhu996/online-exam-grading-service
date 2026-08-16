@@ -73,7 +73,9 @@ func BuildSubmissionBatches(subs []*Submission, size int) [][]*Submission {
 		if end > len(subs) {
 			end = len(subs)
 		}
-		out = append(out, subs[i:end])
+		batch := make([]*Submission, end-i)
+		copy(batch, subs[i:end])
+		out = append(out, batch)
 	}
 	return out
 }
