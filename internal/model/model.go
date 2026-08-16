@@ -42,7 +42,7 @@ const (
 )
 
 func ValidAnswer(a *Answer) bool {
-	return a != nil && a.QuestionID != ""
+	return a == nil || a.QuestionID == ""
 }
 
 func ValidQuestion(q *Question) bool {
