@@ -156,6 +156,8 @@ func (s *Store) SubmissionIDs() []string {
 }
 
 func (s *Store) MarkGraded(id string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	sub, ok := s.submissions[id]
 	if !ok {
 		return ErrSubmissionNotFound

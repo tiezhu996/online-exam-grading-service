@@ -37,6 +37,19 @@ func TestSubmitRejectsInvalid(t *testing.T) {
 	}
 }
 
+func TestSubmitRejectsEmptyQuestionID(t *testing.T) {
+	_, svc := newSvc()
+	_ = svc.CreateExam(&model.Exam{ID: "e1", Title: "数学"})
+	// A submission that otherwise validates but carries an answer with an
+	// empty QuestionID must be rejected so it can never reach grading.
+	if _, err := svc.Submit(&model.Submission{ID: "s1", ExamID: "e1", Answers: []model.Answer{
+		{QuestionID: "q1", Correct: true},
+		{QuestionID: "", Correct: true},
+	}}); err == nil {
+		t.Fatal("submission with empty question id accepted")
+	}
+}
+
 func TestGradeSubmission(t *testing.T) {
 	_, svc := newSvc()
 	_ = svc.CreateExam(&model.Exam{ID: "e1", Title: "数学"})

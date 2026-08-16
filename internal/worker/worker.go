@@ -26,6 +26,10 @@ func (p *Pool) GradeAll(ctx context.Context) model.Summary {
 	var wg sync.WaitGroup
 	ch := make(chan []*model.Submission, len(batches))
 
+	for i := 0; i < p.workers; i++ {
+		wg.Add(1)
+	}
+
 	go func() {
 		defer close(ch)
 		for _, b := range batches {
@@ -37,14 +41,19 @@ func (p *Pool) GradeAll(ctx context.Context) model.Summary {
 		}
 	}()
 
-	var sum model.Summary
+	var (
+		mu  sync.Mutex
+		sum model.Summary
+	)
 
 	for i := 0; i < p.workers; i++ {
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
+			var local model.Summary
 			for batch := range ch {
-				var local model.Summary
+				if ctx.Err() != nil {
+					break
+				}
 				for _, sub := range batch {
 					_, err := p.svc.GradeSubmission(sub.ID)
 					local.Checked++
@@ -54,8 +63,10 @@ func (p *Pool) GradeAll(ctx context.Context) model.Summary {
 					}
 					local.Graded++
 				}
-				sum = model.MergeSummary(sum, local)
 			}
+			mu.Lock()
+			sum = model.MergeSummary(sum, local)
+			mu.Unlock()
 		}()
 	}
 
