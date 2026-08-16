@@ -48,7 +48,7 @@ func (svc *Service) Submit(sub *model.Submission) (string, error) {
 	}
 	id, err := svc.store.AddSubmission(sub)
 	if err != nil {
-		return "", fmt.Errorf("submit %s: %v", sub.ID, err)
+		return "", fmt.Errorf("submit %s: %w", sub.ID, err)
 	}
 	return id, nil
 }
@@ -64,12 +64,12 @@ func (svc *Service) ListSubmissions(examID string) []*model.Submission {
 func (svc *Service) GradeSubmission(id string) (float64, error) {
 	sub, err := svc.store.GetSubmission(id)
 	if err != nil {
-		return 0, fmt.Errorf("grade %s: %v", id, err)
+		return 0, fmt.Errorf("grade %s: %w", id, err)
 	}
 	qs := svc.store.ListQuestions(sub.ExamID)
 	sub.Score = model.ScoreFor(qs, sub.Answers)
 	if err := svc.store.MarkGraded(id); err != nil {
-		return 0, fmt.Errorf("mark graded %s: %v", id, err)
+		return 0, fmt.Errorf("mark graded %s: %w", id, err)
 	}
 	return sub.Score, nil
 }

@@ -55,6 +55,7 @@ func (p *Pool) GradeAll(ctx context.Context) model.Summary {
 					_, err := p.svc.GradeSubmission(sub.ID)
 					local.Checked++
 					if err != nil {
+						local.Failed++
 						continue
 					}
 					local.Graded++
