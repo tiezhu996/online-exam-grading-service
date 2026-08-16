@@ -28,7 +28,6 @@ type Store struct {
 func New() *Store {
 	return &Store{
 		exams:           make(map[string]*model.Exam),
-		questions:       make(map[string]*model.Question),
 		submissions:     make(map[string]*model.Submission),
 		examOrder:       []string{},
 		questionOrder:   []string{},
