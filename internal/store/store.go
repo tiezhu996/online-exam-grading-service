@@ -2,6 +2,7 @@ package store
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"sync"
 
@@ -52,7 +53,7 @@ func (s *Store) GetExam(id string) (*model.Exam, error) {
 	defer s.mu.RUnlock()
 	e, ok := s.exams[id]
 	if !ok {
-		return nil, ErrExamNotFound
+		return nil, fmt.Errorf("exam %s not found", id)
 	}
 	return e, nil
 }
@@ -120,7 +121,7 @@ func (s *Store) GetSubmission(id string) (*model.Submission, error) {
 	defer s.mu.RUnlock()
 	sub, ok := s.submissions[id]
 	if !ok {
-		return nil, ErrSubmissionNotFound
+		return nil, fmt.Errorf("submission %s not found", id)
 	}
 	return sub, nil
 }
@@ -160,7 +161,7 @@ func (s *Store) MarkGraded(id string) error {
 	defer s.mu.Unlock()
 	sub, ok := s.submissions[id]
 	if !ok {
-		return ErrSubmissionNotFound
+		return fmt.Errorf("submission %s not found", id)
 	}
 	sub.Status = model.StatusGraded
 	return nil

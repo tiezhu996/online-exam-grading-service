@@ -83,7 +83,6 @@ func BuildSubmissionBatches(subs []*Submission, size int) [][]*Submission {
 func MergeSummary(dst, src Summary) Summary {
 	dst.Checked += src.Checked
 	dst.Graded += src.Graded
-	dst.Failed += src.Failed
 	return dst
 }
 
