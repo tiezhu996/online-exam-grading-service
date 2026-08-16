@@ -43,6 +43,9 @@ func (svc *Service) AddQuestion(q *model.Question) error {
 }
 
 func (svc *Service) Submit(sub *model.Submission) (string, error) {
+	if !model.ValidSubmission(sub) {
+		return "", errors.New("invalid submission")
+	}
 	id, err := svc.store.AddSubmission(sub)
 	if err != nil {
 		return "", fmt.Errorf("submit %s: %w", sub.ID, err)

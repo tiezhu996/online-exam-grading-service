@@ -37,15 +37,21 @@ func (p *Pool) GradeAll(ctx context.Context) model.Summary {
 		}
 	}()
 
+	var mu sync.Mutex
 	var sum model.Summary
 
 	for i := 0; i < p.workers; i++ {
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
 			for batch := range ch {
 				var local model.Summary
 				for _, sub := range batch {
+					select {
+					case <-ctx.Done():
+						return
+					default:
+					}
 					_, err := p.svc.GradeSubmission(sub.ID)
 					local.Checked++
 					if err != nil {
@@ -54,7 +60,9 @@ func (p *Pool) GradeAll(ctx context.Context) model.Summary {
 					}
 					local.Graded++
 				}
+				mu.Lock()
 				sum = model.MergeSummary(sum, local)
+				mu.Unlock()
 			}
 		}()
 	}
