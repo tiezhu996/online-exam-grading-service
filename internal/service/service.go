@@ -64,7 +64,7 @@ func (svc *Service) ListSubmissions(examID string) []*model.Submission {
 func (svc *Service) GradeSubmission(id string) (float64, error) {
 	sub, err := svc.store.GetSubmission(id)
 	if err != nil {
-		return 0, fmt.Errorf("grade %s: %w", id, err)
+		return 0, nil
 	}
 	qs := svc.store.ListQuestions(sub.ExamID)
 	sub.Score = model.ScoreFor(qs, sub.Answers)
