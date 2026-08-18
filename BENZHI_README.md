@@ -1,15 +1,22 @@
-# online-exam__002
+# online-exam-grading-service
 
-## 标准命令
+## Build, run, and test
 
 ```bash
-go build ./...     # 编译
-go run ./cmd/app   # 启动（如项目可运行）
-go test ./...      # 测试（如有）
+go build ./...
+go run ./cmd/onlineexam
+go test ./...
 ```
 
-## 环境
+This repository exposes a one-shot CLI entrypoint. A successful run prints its readiness message and exits with status 0; it is not a long-running HTTP service.
 
-- 基础镜像: golang:1.22
-- 依赖已在镜像构建阶段预下载，容器内离线可用。
-- 代码目录: /app
+## Docker verification
+
+```bash
+docker build -f benzhi.Dockerfile -t online-exam-grading-service:local .
+docker run --rm online-exam-grading-service:local
+```
+
+- Base image: `golang:1.22`
+- Source directory in the image: `/app`
+- Container command: `/usr/local/bin/onlineexam`
